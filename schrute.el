@@ -85,9 +85,14 @@
 (defvar-local schrute--time-last-command (current-time) "Time of invocation for `last-command'.")
 (defvar schrute--interesting-commands nil "List of commands we care about.  Generated when `schrute-mode' is activated.")
 
+(defun schrute--fact-message (cmd)
+  "Message which command was used with any bindings"
+  (message "FACT: %s" (with-output-to-string (where-is cmd))))
+
 (defun schrute--call-until-success (cmd)
   "Call command `CMD' until the user comply with the input required."
-  (when (not (ignore-errors (call-interactively cmd) t))
+  (if (ignore-errors (call-interactively cmd) t)
+      (schrute--fact-message cmd)
     (discard-input)
     (schrute--call-until-success cmd)))
 
